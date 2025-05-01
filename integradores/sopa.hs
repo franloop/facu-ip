@@ -29,8 +29,6 @@ maximoFila (e:fila) | e > maximoFila fila = e
 
 
 
-
-
 -- TESTING --          
 getFila :: Integer -> Fila
 getFila 1 = [2,3,6,10,33,2]

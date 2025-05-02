@@ -50,7 +50,13 @@ masRepetido:
     termina si: 
     el tablero es vacio -> 0
     la busqueda finaliza -> devuelve mas repetido
+-}
 
+masRepetido :: Tablero -> Integer
+masRepetido [] = 0
+masRepetido tablero = buscarRepetido tablero 0 0
+
+{-
 funcion:
     recibe:
     devuelve:
@@ -109,25 +115,11 @@ limpiarListasVacias (lista:tablero) | lista == [] = limpiarListasVacias tablero
                                  | otherwise = lista:limpiarListasVacias tablero
 
 
+
+
 -- buscarRepetido [ [2,3,6,3,10,13,2] ] , 0 , 0 -> 2 > 0 = buscarRepetido [[3,6,3,10,13]], 2, 2
 -- buscarRepetido [[3,6,3,10,13]], 2, 2 -> 2 >= 2 = buscarRepetido [[6,10,13]], 3, 2
 -- buscarREpetido [[6,10,13]], 3, 2 -> 2 >= 1 != buscarRepetido 
-
-
--- TESTING --          
-getFila :: Integer -> Fila
-getFila 1 = [3,3,3,3,6,10,33,2 ,3, 6, 3]
-getFila 2 = [2,1,6,2,10,33,3,2]
-getFila 3 = [2,23,2,6,2,1,4,5,10,38,2]
-getFila 4 = [2,3,6,3,10,13,2]
-
-getTablero :: Integer -> Tablero
-getTablero 1 = (getFila 1):(getFila 2):(getFila 2):(getFila 4):[]
-getTablero 2 = (getFila 2):(getFila 3):(getFila 4):[]
-getTablero 3 = (getFila 3):(getFila 4):[]
-getTablero 4 = (getFila 4):[]
-getTablero 5 = []
-
 
 {-
 funcion:
@@ -167,13 +159,7 @@ borrarElementoTablero (fila:tablero) elemento = (borrarElementoFila fila element
 
 
 {-
-funcion:
-    recibe:
-    devuelve:
-    necesita:
-    debe:
-    depende:
-    termina si:
+
 
 borrarElementoFila:
     recibe:
@@ -249,15 +235,6 @@ contarElementoFila (e:resto) elemento |  e == elemento = 1 + contarElementoFila 
                                      | otherwise = contarElementoFila resto elemento
 
 
-
-
-
-    
-
-
-
-
-
 {-
 
 
@@ -299,4 +276,120 @@ borrarElementoFila (e:fila) elemento | e == elemento = borrarElemento
 
 
 
+-- TESTING --          
+getFila :: Integer -> Fila
+getFila 1 = [3,3,3,3,6,10,33,2 ,3, 6, 3]
+getFila 2 = [2,1,6,2,10,33,3,2]
+getFila 3 = [2,23,2,6,2,1,4,5,10,38,2]
+getFila 4 = [2,3,6,3,10,13,2]
 
+getTablero :: Integer -> Tablero
+getTablero 1 = (getFila 1):(getFila 2):(getFila 3):(getFila 4):[]
+getTablero 2 = (getFila 2):(getFila 3):(getFila 4):[]
+getTablero 3 = (getFila 3):(getFila 4):[]
+getTablero 4 = (getFila 4):[]
+getTablero 5 = []
+
+getCamino :: Integer -> Camino
+getCamino 1 = (1,1):(2,1):(2,2):(3,2):(4,2):(4,3):[]
+getCamino 4 = (1,1):(1,2):[]
+
+{-
+Ejercicio 7. Implementar la funci´on valoresDeCamino :: Tablero ->Camino ->[Int]
+problema valoresDeCamino (t: Tablero, c: Camino) : seq⟨Z⟩ {
+requiere: {El tablero t es un tablero bien formado, es decir, la longitud de todas las filas es la misma, y tienen al
+menos un elemento}
+requiere: {Existe al menos una columna en el tablero t }
+requiere: {El tablero t no es vac´ıo, todos los n´umeros del tablero son positivos, mayores estrictos a 0}
+requiere: {El camino c es un camino v´alido, es decir, secuencia de posiciones adyacentes en la que solo es posible
+desplazarse hacia la posici´on de la derecha o hacia abajo y todas las posiciones est´an dentro de los limites del tablero
+t}
+asegura: {res es igual a la secuencia de n´umeros que est´an en el camino c, ordenados de la misma forma que aparecen
+las posiciones correspondientes en el camino.}
+}
+ -}
+
+ {-
+ funcion:
+    recibe:
+    devuelve:
+    necesita:
+    debe:
+    depende:
+    termina si:
+
+valoresDeCamino:
+    recibe: 
+        Tablero (secuencia de filas)
+        Camino (secuencia de posiciones)
+    devuelve: 
+        lista de valores del tablero encontrados en el camino en el orden señalado en camino
+
+    necesita: 
+        obtener una lista por posicion
+        obtener un valor en la lista por posicion
+        juntarlo al resto de los valores
+    debe: 
+        almacenar el resultado parcial
+    depende: 
+        funcion que devuelva uan fila determinada
+        funcion que devuelva un valor de una fila
+    termina si: 
+        no hay más elementos -> []
+        si hay más elementos -> sigue buscando con un set reducido.
+ -}
+ 
+valoresDeCamino :: Tablero -> Camino -> [Integer]
+valoresDeCamino _ [] = []
+valoresDeCamino tablero ((fila,columna):camino) = (obtenerValorListaAux (obtenerFilaAux tablero fila 1) columna 1):valoresDeCamino tablero camino
+
+ {-
+ obtenerValorLista:
+    recibe:
+        fila
+        indice
+    devuelve:
+        valor en ese indice
+    necesita:
+        recorrer la lista y situarse en una posición. 
+    debe: 
+        saber en que elemento está parado. 
+    depende:
+        de una función que sepa en que posición está comparado con la pedida.
+    termina si: 
+        no hay más elementos -> []
+        si hay más elementos -> sigue buscando con un set reducido. 
+ -}
+
+obtenerValorLista :: Fila -> Integer -> Integer
+obtenerValorLista [] _ = 0
+obtenerValorLista fila posicion = obtenerValorListaAux fila posicion 1
+
+ {-
+ obtenerValorListaAux:
+    recibe:
+        fila
+        indiceVisto (empieza de 1)
+        indicePedido
+    devuelve
+        valor en ese indice
+    necesita:
+        recorre la lista hasta la posición pedida y cuando llega al indiceVisto devuelve el valor.
+    debe:
+        validar posición y devolver valor.
+    termina si:
+        indiceVisto es igual al indicePedido
+        sino sigue iterando sumando 1 al indice visto.
+ -}
+
+obtenerValorListaAux :: Fila -> Integer -> Integer -> Integer
+obtenerValorListaAux (elemento:fila) posicionPedida posicionVista | posicionVista == posicionPedida = elemento
+                                                                 | otherwise = obtenerValorListaAux fila posicionPedida (posicionVista+1) 
+
+obtenerFila :: Tablero -> Integer -> Fila
+obtenerFila [] _ = []
+obtenerFila tablero posicion = obtenerFilaAux tablero posicion 1
+
+obtenerFilaAux :: Tablero -> Integer -> Integer -> Fila
+obtenerFilaAux (fila:tablero) indicePedido indiceVisto | indiceVisto == indicePedido = fila
+                                                       | otherwise = obtenerFilaAux tablero indicePedido (indiceVisto+1)

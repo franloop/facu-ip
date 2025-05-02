@@ -279,9 +279,11 @@ borrarElementoFila (e:fila) elemento | e == elemento = borrarElemento
 -- TESTING --          
 getFila :: Integer -> Fila
 getFila 1 = [3,3,3,3,6,10,33,2 ,3, 6, 3]
-getFila 2 = [2,1,6,2,10,33,3,2]
-getFila 3 = [2,23,2,6,2,1,4,5,10,38,2]
-getFila 4 = [2,3,6,3,10,13,2]
+getFila 2 = [2,1,1,2,10,33,3,2]
+getFila 3 = [2,23,2,3,2,1,4,5,10,38,2]
+getFila 4 = [2,3,6,5,8,13,2]
+
+
 
 getTablero :: Integer -> Tablero
 getTablero 1 = (getFila 1):(getFila 2):(getFila 3):(getFila 4):[]
@@ -293,7 +295,7 @@ getTablero 5 = []
 getCamino :: Integer -> Camino
 getCamino 1 = (1,1):(2,1):(2,2):(3,2):(4,2):(4,3):[]
 getCamino 4 = (1,1):(1,2):[]
-
+getCamino 5 = [(2,2),(2,3),(3,3),(3,4),(4,4),(4,5)]
 {-
 Ejercicio 7. Implementar la funci´on valoresDeCamino :: Tablero ->Camino ->[Int]
 problema valoresDeCamino (t: Tablero, c: Camino) : seq⟨Z⟩ {
@@ -393,3 +395,72 @@ obtenerFila tablero posicion = obtenerFilaAux tablero posicion 1
 obtenerFilaAux :: Tablero -> Integer -> Integer -> Fila
 obtenerFilaAux (fila:tablero) indicePedido indiceVisto | indiceVisto == indicePedido = fila
                                                        | otherwise = obtenerFilaAux tablero indicePedido (indiceVisto+1)
+
+{- 
+Ejercicio 8. Implementar la funci´on esCaminoFibo :: [Int] ->Int ->Bool
+problema esCaminoFibo (s:seq⟨Z⟩, i : Z) : Bool {
+requiere: {La secuencia de n´umeros s es no vac´ıa y est´a compuesta por n´umeros positivos (mayores estrictos a 0)
+que representan los n´umeros ubicados en las posiciones que forman un camino en un tablero}
+requiere: {i ≥ 0}
+asegura: {res = true ⇔ los valores de s son la sucesi´on de Fibonacci inicializada con el n´umero pasado como
+par´ametro i}
+}Ejercicio 8. Implementar la funci´on esCaminoFibo :: [Int] ->Int ->Bool
+problema esCaminoFibo (s:seq⟨Z⟩, i : Z) : Bool {
+requiere: {La secuencia de n´umeros s es no vac´ıa y est´a compuesta por n´umeros positivos (mayores estrictos a 0)
+que representan los n´umeros ubicados en las posiciones que forman un camino en un tablero}
+requiere: {i ≥ 0}
+asegura: {res = true ⇔ los valores de s son la sucesi´on de Fibonacci inicializada con el n´umero pasado como
+par´ametro i}
+}
+Notas: En este ejercicio se pasa una secuencia de valores en lugar de un tablero y un camino para no generar dependencia
+con el ejercicio anterior. Recordemos que la sucesi´on de Fibonacci est´a definida con la siguiente funci´on recursiva:
+f(0) = 0
+f(1) = 1
+f(n) = f(n-1) + f(n-2) con n>1
+En el ejemplo del tablero y del camino (verde claro) que figuran m´as arriba tenemos que esCaminoFibo [1,1,2,3,5] 1
+reduce a True.
+esCaminoFibo (valoresDeCamino tablero [(3,2), (4, 2), (4,3)]) 3, siendo tablero el del ejemplo, tambi´en reduce a
+True.
+f(1) = 1
+f(n) = f(n-1) + f(n-2) con n>1
+En el ejemplo del tablero y del camino (verde claro) que figuran m´as arriba tenemos que esCaminoFibo [1,1,2,3,5] 1
+reduce a True.
+esCaminoFibo (valoresDeCamino tablero [(3,2), (4, 2), (4,3)]) 3, siendo tablero el del ejemplo, tambi´en reduce a
+True.
+
+-}
+
+
+{-
+
+esCaminoFibo:
+    recibe: 
+        lista de valores
+        inicialización de fibonacci
+    
+    devuelve:
+        verdadero o falso si la lista de valores corresponde en cada posicion con la correspondiente a la sucesión de fibonacci inicializada en I
+    
+    necesita: 
+        calcular valor de sucession fibonacci para un N
+        comparar ese valor por cada valor de la fila
+        pasar el siguiente valor a comparar a la funcion.
+    
+    depende: 
+        calculo de sucession fibonacti para N
+
+    termina si: 
+        no tiene más valores que revisar = True
+        si coincide -> revisa el siguiente 
+        si no coincide = false
+-}
+
+fibonacci :: Integer -> Integer
+fibonacci 0 = 0
+fibonacci 1 = 1
+fibonacci n = fibonacci (n-1) + fibonacci (n-2)
+
+esCaminoFibo :: Fila -> Integer -> Bool
+esCaminoFibo [] _ = True
+esCaminoFibo (elemento:fila) n | fibonacci n == elemento = esCaminoFibo fila (n+1)
+                               | otherwise = False
